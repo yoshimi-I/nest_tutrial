@@ -45,7 +45,12 @@ export class ItemsController {
 # services
 - 具体的なビジネスロジックを実装する
 ```ts
-
+@Injectable()
+export class ItemsService {
+  findAll() {
+    return 'This is ItemServices';
+  }
+}
 ```
 ## 解説
 - デコレータは@Injectable()
