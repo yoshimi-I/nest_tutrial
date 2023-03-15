@@ -79,7 +79,7 @@ export class ItemsController {
   }
 }
   ```
-# DBに格納する方法
+# 3. DBに格納する方法
 1. まずは格納するitemのInterfaceを同じmoduleディレクトリに作成する(今回ならitems)
 - また今回はenumを用いている
   ```ts
@@ -92,7 +92,7 @@ export class ItemsController {
   } 
   ```
 2. CRUD操作のCreate参照
-# CRUD操作の実装
+# 4. CRUD操作の実装
 ## 1. Createメソッドの実装
 - 基本的にCreateはPostメソッドを用いて行うためbodyに値を入れ込む必要がある
 - ここで**@Body**を用いる
@@ -127,7 +127,7 @@ export class ItemsController {
   ```
   - このように':id'とすることで可変長のパラメータと認識させることができ,また@Paramを用いることで引数に反映させる
   - servicesでの書き方は以下のようになっている
-  ```
+  ```ts
   findById(id: string): Item {
       return this.items.find((item) => item.id === id);
     }
