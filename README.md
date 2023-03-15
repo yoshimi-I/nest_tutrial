@@ -96,4 +96,39 @@ export class ItemsController {
 ## 1. Createメソッドの実装
 - 基本的にCreateはPostメソッドを用いて行うためbodyに値を入れ込む必要がある
 - ここで**@Body**を用いる
-
+```
+  @Post()
+  create(
+    @Body('id') id: string,
+    @Body('name') name: string,
+    @Body('price') price: number,
+    @Body('description') description: string,
+  ): Item {
+    const item: Item = {
+      id,
+      name,
+      price,
+      description,
+      status: ItemStatus.ON_SALE,
+    };
+    return this.ItemsService.create(item);
+  }
+}
+```
+## Readメソッドの実装
+- 今回は主にidを引数にとると一致したidの商品を取得する処理を実装したいとする
+- 今回はクエリパラメータを使いgetメソッドで取得する必要がある
+- ここで今回は**@Param**を用いる
+  ```ts
+  @Get(':id')
+    findById(@Param('id') id: string): Item {
+      return this.ItemsService.findById(id);
+    }
+  ```
+  - このように':id'とすることで可変長のパラメータと認識させることができ,また@Paramを用いることで引数に反映させる
+  - servicesでの書き方は以下のようになっている
+  ```
+  findById(id: string): Item {
+      return this.items.find((item) => item.id === id);
+    }
+  ```
