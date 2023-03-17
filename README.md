@@ -152,3 +152,17 @@ export class ItemsController {
   ```
 ## 4. Deleteメソッドの実装
 - idを指定して一致した商品を削除するメソッドを実装
+- 今回は＠deleteを用いることで実装可能
+  - Controller側の実装
+  ```ts
+    @Delete(':id')
+  delete(@Param('id') id: string): void {
+    this.ItemsService.delateStatus(id);
+  }
+  ```
+  - Services側の実装
+  ```ts
+    delateStatus(id: string): void {
+    this.items = this.items.filter((item) => item.id !== id);
+  }
+  ```
