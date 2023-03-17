@@ -150,3 +150,5 @@ export class ItemsController {
     return item;
   }
   ```
+## 4. Deleteメソッドの実装
+- idを指定して一致した商品を削除するメソッドを実装
