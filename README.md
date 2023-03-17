@@ -89,14 +89,14 @@ export class ItemsController {
     price: number;
     description: string;
     status: ItemStatus;
-  } 
-  ```
+  }
+
 2. CRUD操作のCreate参照
 # 4. CRUD操作の実装
 ## 1. Createメソッドの実装
 - 基本的にCreateはPostメソッドを用いて行うためbodyに値を入れ込む必要がある
 - ここで**@Body**を用いる
-```
+```ts
   @Post()
   create(
     @Body('id') id: string,
@@ -131,4 +131,22 @@ export class ItemsController {
   findById(id: string): Item {
       return this.items.find((item) => item.id === id);
     }
+  ```
+## 3. Updateメソッドの実装
+- 今回は主にidを引数にとると一致したidの商品をSoldOutに変更する処理を実装する
+- 今回は更新処理のため**@Patch**を用いて実装する
+  - Controller側の実装
+  ```ts
+    @Patch(':id')
+    updateStatus(@Param('id') id: string): Item {
+      return this.ItemsService.updateStatus(id);
+    }
+  ```
+  - Services側の実装
+  ```ts
+    updateStatus(id: string): Item {
+    const item = this.findById(id);
+    item.status = ItemStatus.SOLD_OUT;
+    return item;
+  }
   ```
