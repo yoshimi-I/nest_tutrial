@@ -1,4 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+// eslint-disable-next-line prettier/prettier
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
 import { Item } from './item.model';
 import { ItemsService } from './items.service';
 import { ItemStatus } from './item_status.enum';
@@ -12,7 +13,7 @@ export class ItemsController {
     return this.ItemsService.findAll();
   }
   @Get(':id')
-  findById(@Param('id') id: string): Item {
+  findById(@Param('id', ParseUUIDPipe) id: string): Item {
     return this.ItemsService.findById(id);
   }
   @Post()
@@ -20,11 +21,11 @@ export class ItemsController {
     return this.ItemsService.create(CreateItemDto);
   }
   @Patch(':id')
-  updateStatus(@Param('id') id: string): Item {
+  updateStatus(@Param('id', ParseUUIDPipe) id: string): Item {
     return this.ItemsService.updateStatus(id);
   }
   @Delete(':id')
-  delete(@Param('id') id: string): void {
+  delete(@Param('id', ParseUUIDPipe) id: string): void {
     this.ItemsService.delateStatus(id);
   }
 }

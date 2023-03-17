@@ -79,20 +79,8 @@ export class ItemsController {
   }
 }
   ```
-# 3. DBに格納する方法
-1. まずは格納するitemのInterfaceを同じmoduleディレクトリに作成する(今回ならitems)
-- また今回はenumを用いている
-  ```ts
-  export interface Item {
-    id: string;
-    name: string;
-    price: number;
-    description: string;
-    status: ItemStatus;
-  }
 
-2. CRUD操作のCreate参照
-# 4. CRUD操作の実装
+# 3. CRUD操作の実装
 ## 1. Createメソッドの実装
 - 基本的にCreateはPostメソッドを用いて行うためbodyに値を入れ込む必要がある
 - ここで**@Body**を用いる
@@ -195,3 +183,39 @@ export class CreateItemDTO {
     this.items = this.items.filter((item) => item.id !== id);
   }
   ```
+# 4. バリデーションチェック
+- 基本的には入力チェックのことを言う
+- post通信を行うときに値が適切なものかの判断を行う
+## 使用方法
+- Nest.jsではPipeを用いる,使い方は大きく3つある
+  1. ハンドラごとに利用する方法
+  2. ボディのパラメータごとに利用する方法
+  3. main.tsに使用することでアプリケーション全体に使用する方法
+## インストール方法
+- 今回はidにuuidを用いる
+- uuidとはいつでも誰でも作れるけど、作ったIDは世界中で重複しないことになっているIDのことである
+```zsh
+npm install --save uuid
+```
+## 適応方法
+- 今回はパラメータに適応する
+- 今回は@Paramの第二引数に適応する
+  ```ts
+    @Get(':id')
+    findById(@Param('id', ParseUUIDPipe) id: string): Item {
+      return this.ItemsService.findById(id);
+    }
+  ```
+# 5. DBに格納する方法
+1. まずは格納するitemのInterfaceを同じmoduleディレクトリに作成する(今回ならitems)
+- また今回はenumを用いている
+  ```ts
+  export interface Item {
+    id: string;
+    name: string;
+    price: number;
+    description: string;
+    status: ItemStatus;
+  }
+
+2. CRUD操作のCreate参照
