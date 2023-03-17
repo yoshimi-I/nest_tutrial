@@ -115,6 +115,35 @@ export class ItemsController {
   }
 }
 ```
+### DTOの使用
+- 上記のコードでは＠Bodyをつけて全てに値を代入しているがこれはDTO(DBに格納する型を指定したclass)を使用することでより簡単に書ける
+- 名前は別にDTOでなくてもいいがclassを用いないとバリデーションができない(Interfaceだとまずい)
+```ts
+export class CreateItemDTO {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+}
+```
+- controllerの書き換え
+```ts
+  @Post()
+  create(@Body() CreateItemDto: CreateItemDTO): Item {
+    return this.ItemsService.create(CreateItemDto);
+  }
+```
+- serviceの書き換え
+```ts
+  create(CreateItemDTO: CreateItemDTO): Item {
+    const item: Item = {
+      ...CreateItemDTO,
+      status: ItemStatus.ON_SALE,
+    };
+    this.items.push(item);
+    return item;
+  }
+```
 ## 2. Readメソッドの実装
 - 今回は主にidを引数にとると一致したidの商品を取得する処理を実装したいとする
 - 今回はクエリパラメータを使いgetメソッドで取得する必要がある
@@ -156,7 +185,7 @@ export class ItemsController {
   - Controller側の実装
   ```ts
     @Delete(':id')
-  delete(@Param('id') id: string): void {
+    delete(@Param('id') id: string): void {
     this.ItemsService.delateStatus(id);
   }
   ```
