@@ -186,6 +186,7 @@ export class CreateItemDTO {
 # 4. バリデーションチェック
 - 基本的には入力チェックのことを言う
 - post通信を行うときに値が適切なものかの判断を行う
+- また詳しい説明は[ここ](https://github.dev/typestack/class-validator)を参照
 ## 使用方法
 - Nest.jsではPipeを用いる,使い方は大きく3つある
   1. ハンドラごとに利用する方法
@@ -197,7 +198,12 @@ export class CreateItemDTO {
 ```zsh
 npm install --save uuid
 ```
+- またクラスバリデーションをインスト〜する方法は以下である
+```zsh
+npm install --save class-validator class-transformer
+```
 ## 適応方法
+### 1. パラメータへの適応方法
 - 今回はパラメータに適応する
 - 今回は@Paramの第二引数に適応する
   ```ts
@@ -206,7 +212,52 @@ npm install --save uuid
       return this.ItemsService.findById(id);
     }
   ```
-# 5. DBに格納する方法
+### 2. DTOへの適応方法
+- DTOに適応する
+- 1. まずはmain.tsを変更
+  ```ts
+  async function bootstrap() {
+    const app = await NestFactory.create(AppModule);
+    app.useGlobalPipes(new ValidationPipe());
+    await app.listen(3000);
+  }
+  bootstrap();
+  ```
+  - 2. 次にDTOを変更
+    - 具体的はバリデーションは[ここ](https://github.dev/typestack/class-validator)を参照
+    ```ts
+    export class CreateItemDTO {
+      @IsString()
+      @IsNotEmpty()
+      @MaxLength(40)
+      name: string;
+
+      @IsInt()
+      @Min(1)
+      @Type(() => Number)
+      price: number;
+
+      @IsString()
+      @IsNotEmpty()
+      description: string;
+    }
+    ```
+
+# 5. 例外処理
+- Nest.jsに対応する例外処理を使う
+- 詳しくは[ここ](https://zenn.dev/kisihara_c/books/nest-officialdoc-jp/viewer/overview-excepitonfilters)を参照
+- 基本的にはserviceに記載する
+- 具体的な実装方法は以下のようにする
+  ```ts
+  findById(id: string): Item {
+      const canFind = this.items.find((item) => item.id === id);
+      if (!canFind) {
+        throw new NotFoundException();
+      }
+      return canFind;
+    }
+  ```
+# 6. DB接続
 1. まずは格納するitemのInterfaceを同じmoduleディレクトリに作成する(今回ならitems)
 - また今回はenumを用いている
   ```ts
@@ -219,3 +270,5 @@ npm install --save uuid
   }
 
 2. CRUD操作のCreate参照
+
+#
