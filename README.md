@@ -258,17 +258,46 @@ npm install --save class-validator class-transformer
     }
   ```
 # 6. DB接続
-1. まずは格納するitemのInterfaceを同じmoduleディレクトリに作成する(今回ならitems)
-- また今回はenumを用いている
-  ```ts
-  export interface Item {
-    id: string;
-    name: string;
-    price: number;
-    description: string;
-    status: ItemStatus;
-  }
+## ORMの使い方
+- オブジェクト指向とRDBの間を結びつけるもの
+### メリット
+- SQLを書かなくてもいい
+- データの定義をEntityに書けばいいので安心である
+-　またEntityはRepositoryで管理する
+## Entityとは
+- RDBと対応するオブジェクトを記載
+- Entityデコレータを用いてクラスを定義していく
 
-2. CRUD操作のCreate参照
+## Repositoryとは
+- Entityを管理するためにある
+- Entityと1対1となり,データベース操作を抽象化する
+## Q. じゃあDTOとEntityの違いは何か
+- A. これは簡単にいうとEntityはDBに格納する型を記載する役割を持ち,DTOはアプリケーション内のビジネスロジックの方を定義するときに使う
 
-#
+## ORMのインストール方法
+- 今回はTypeORMを用いる
+```sh
+npm install --save @nestjs/typeorm typeorm pg
+```
+### TypeORMの使い方
+1. app.module.tsを書き換える
+```ts
+@Module({
+  imports: [
+    ItemsModule,
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'postgres',
+      password: 'postgres',
+      database: 'postgres',
+      autoLoadEntities: true,
+    }),
+  ],
+  controllers: [],
+  providers: [],
+})
+```
+- これはdocker-compose.ymlに設定したものである
+- autoLoadEntitiesはtrueにすることで,EntityにtypeOrmの設定を毎度書かなくて済むわけである
