@@ -271,6 +271,7 @@ npm install --save class-validator class-transformer
 ## Repositoryとは
 - Entityを管理するためにある
 - Entityと1対1となり,データベース操作を抽象化する
+- create操作やread操作といったような処理を細分化しEntity単位で作成する
 ## Q. じゃあDTOとEntityの違いは何か
 - A. これは簡単にいうとEntityはDBに格納する型を記載する役割を持ち,DTOはアプリケーション内のビジネスロジックの方を定義するときに使う
 
@@ -301,3 +302,48 @@ npm install --save @nestjs/typeorm typeorm pg
 ```
 - これはdocker-compose.ymlに設定したものである
 - autoLoadEntitiesはtrueにすることで,EntityにtypeOrmの設定を毎度書かなくて済むわけである
+## マイグレーション
+- データの定義ファイルを使いDBを操作する方法(今回であればEntityがそれにあたる)
+- Entityからそれに伴うtableを接続されているDBに作成する
+- また今回マイグレーションはNest.jsのCLIではなく,TypeORMのCLIから行う
+### 設定方法
+1. まずはormconfig.jsを作成する
+  - ここに設定を書き込む
+    ```js
+    module.exports = {
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'postgres',
+      password: 'postgres',
+      database: 'postgres',
+      entities: ['dist/entities/*.entity.js'],
+      migrations: ['dist/migrations/*.js'],
+      cli: {
+        entitiesDir: 'src/entities',
+        migrationsDir: 'src/migrations',
+      },
+    };
+    ```
+    - これは簡単にいうと,Entityを見てそれを元にMigrationを行なっていることになる
+    - 具体的にはEntitiesを見つけて,それに伴うclassを全てテーブル作成に用いる
+### 実行方法
+1. migrationファイルを作成する
+    ```zsh
+    npx typeorm migration:generate -n CreateItem
+    ```
+    - 以上のコマンドを実行することで,テーブルを作成するためのSQL文が構築される
+2. 一度コンパイルする
+    - 今のままではtsファイルが作られただけのため,これを反映させるためにもう一度サーバーを立ち上げ直す
+    ```zsh
+    npm run start:dev
+    ```
+
+3. migrationを実行する
+    ```zsh
+    npx typeorm migration:run
+    ```
+    - こちらを実行することで先ほど作成したtypescriptで作られたSQLから実際にDBにテーブルが作られる
+### 非同期処理
+- 今回repositoryに非同期処理を用いるため,ここで簡単な説明を行う
+- 
